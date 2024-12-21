@@ -30,7 +30,7 @@ class Hospital:
         details_frame = Frame(self.root, bd=20, relief=RIDGE)
         details_frame.place(x=0, y=550, width=1280, height=145)
 
-        self.field_vars = {}
+        field_vars = {}
 
         # Fields for patient information
         fields = [
@@ -52,12 +52,12 @@ class Hospital:
 
             if widget_type == "entry":
                 var = StringVar()
-                self.field_vars[label_text] = var
+                field_vars[label_text] = var
                 widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25,textvariable=var)
                 widget.grid(row=row, column=1)
             elif widget_type == "combo":
                 var = StringVar()
-                self.field_vars[label_text] = var
+                field_vars[label_text] = var
                 widget = ttk.Combobox(data_frame_left, state="readonly", font=("arial", 11), width=25,textvariable=var)
                 widget['value'] = options[0] 
                 widget.current(0)
@@ -70,9 +70,7 @@ class Hospital:
             lbl.grid(row=row, column=2, sticky=W)
 
             if widget_type == "entry":
-                var = StringVar()
-                self.field_vars[label_text] = var
-                widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25, textvariable=var)
+                widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25)
                 widget.grid(row=row, column=3)
 
         self.txt_pres = Text(data_frame_right,bd=2,font=("arial", 12, "bold"),width=45,height=13,padx=2, pady=6)
@@ -142,7 +140,7 @@ class Hospital:
      
 
         try:
-            conn = mysql.connector.connect(host="localhost", username="root", password="root", database="archit")
+            conn = mysql.connector.connect(host="localhost", username="root", password="mannu.jazz09", database="mydata")
             my_cursor = conn.cursor()
 
             query = "SELECT * FROM hospital"
@@ -191,10 +189,9 @@ class Hospital:
                 self.field_vars["Patient Address"].get(),
             ]
 
-            conn = mysql.connector.connect(host="localhost", username="root", password="root", database="archit")
+            conn = mysql.connector.connect(host="localhost", username="root", password="test", database="Mydata")
             my_cursor = conn.cursor()
-            sql = """INSERT INTO hospital VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            my_cursor.execute(sql, tuple(values))
+            my_cursor.execute("INSERT INTO hospital (nameoftablet, ref, dose, nooftablets, lot, issuedate, expdate, dailydose, storage, nhsnumber, pname, dob, address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tuple(values))
             conn.commit()
             conn.close()
 
