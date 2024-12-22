@@ -30,7 +30,7 @@ class Hospital:
         details_frame = Frame(self.root, bd=20, relief=RIDGE)
         details_frame.place(x=0, y=550, width=1280, height=145)
 
-        field_vars = {}
+        self.field_vars = {}
 
         # Fields for patient information
         fields = [
@@ -52,12 +52,12 @@ class Hospital:
 
             if widget_type == "entry":
                 var = StringVar()
-                field_vars[label_text] = var
+                self.field_vars[label_text] = var
                 widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25,textvariable=var)
                 widget.grid(row=row, column=1)
             elif widget_type == "combo":
                 var = StringVar()
-                field_vars[label_text] = var
+                self.field_vars[label_text] = var
                 widget = ttk.Combobox(data_frame_left, state="readonly", font=("arial", 11), width=25,textvariable=var)
                 widget['value'] = options[0] 
                 widget.current(0)
@@ -70,7 +70,9 @@ class Hospital:
             lbl.grid(row=row, column=2, sticky=W)
 
             if widget_type == "entry":
-                widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25)
+                var = StringVar()
+                self.field_vars[label_text] = var
+                widget = Entry(data_frame_left, font=("arial", 13, "bold"), width=25,textvariable=var)
                 widget.grid(row=row, column=3)
 
         self.txt_pres = Text(data_frame_right,bd=2,font=("arial", 12, "bold"),width=45,height=13,padx=2, pady=6)
@@ -85,7 +87,7 @@ class Hospital:
         btn_pres_insert=Button(button_frame,text="Insert",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6,command=self.insertPrescriptionData)
         btn_pres_insert.grid(row=0, column=2)
 
-        btn_pres_delete=Button(button_frame,text="Delete",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6)
+        btn_pres_delete=Button(button_frame,text="Delete",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6,command=self.deletePrescription)
         btn_pres_delete.grid(row=0, column=3)
 
         btn_pres_clear=Button(button_frame,text="Clear",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6)
@@ -140,7 +142,7 @@ class Hospital:
      
 
         try:
-            conn = mysql.connector.connect(host="localhost", username="root", password="mannu.jazz09", database="mydata")
+            conn = mysql.connector.connect(host="localhost", username="root", password="root", database="archit")
             my_cursor = conn.cursor()
 
             query = "SELECT * FROM hospital"
@@ -170,6 +172,21 @@ class Hospital:
 
         except Exception as e:
              messagebox.showerror("Error", f"Error while fetching data: {str(e)}")
+    
+    def deletePrescription(self):
+        # this here is to get the primary key of table to delete
+        selected_table_item = self.hospital_table.focus()
+        details = self.hospital_table.item(selected_table_item)
+        product_ref = details.get("values")[1]
+        # here is the sql command to delete the selected ref
+        conn = mysql.connector.connect(host="localhost", username="root", password="root", database="archit")
+        my_cursor = conn.cursor()
+        query = f"DELETE FROM hospital WHERE ref = {product_ref}"
+        my_cursor.execute(query)
+        conn.commit()
+        conn.close()
+        # this is to referesh the table
+        self.iPrescriptionData()
 
     def insertPrescriptionData(self):
         try:
@@ -189,7 +206,7 @@ class Hospital:
                 self.field_vars["Patient Address"].get(),
             ]
 
-            conn = mysql.connector.connect(host="localhost", username="root", password="test", database="Mydata")
+            conn = mysql.connector.connect(host="localhost", username="root", password="root", database="archit")
             my_cursor = conn.cursor()
             my_cursor.execute("INSERT INTO hospital (nameoftablet, ref, dose, nooftablets, lot, issuedate, expdate, dailydose, storage, nhsnumber, pname, dob, address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tuple(values))
             conn.commit()
