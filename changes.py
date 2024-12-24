@@ -90,7 +90,7 @@ class Hospital:
         btn_pres_delete=Button(button_frame,text="Delete",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6,command=self.deletePrescription)
         btn_pres_delete.grid(row=0, column=3)
 
-        btn_pres_clear=Button(button_frame,text="Clear",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6)
+        btn_pres_clear=Button(button_frame,text="Clear",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6, command=clearPrescription)
         btn_pres_clear.grid(row=0, column=4)
 
         btn_pres_exit=Button(button_frame,text="Exit",bg="#90EE90",fg="black",font=("arial", 12, "bold"),width=20,padx=2, pady=6,command=root.quit)
@@ -187,6 +187,9 @@ class Hospital:
         conn.close()
         # this is to referesh the table
         self.iPrescriptionData()
+    
+    def clearPrescription(self):
+        pass
 
     def insertPrescriptionData(self):
         try:
